@@ -1,0 +1,62 @@
+data_dir: "./datasets"
+train_gender: both
+test_gender: both
+
+model: DepMambaTriModalMoE
+dataset: dvlog #dvlog or lmvd
+train: true
+epochs: 120
+batch_size: 16
+learning_rate: 8e-5
+lr_scheduler: cos
+if_wandb: false
+tqdm_able: false
+save_dir: "./results/"
+gpu: "0"
+device:
+  - "cuda"
+
+# MoE specific parameters
+num_experts: 3
+top_k_experts: 2
+moe_loss_weight: 0.1  # Increased from 0.01 for better load balancing
+# Load balance loss types: 'kl', 'variance', 'combined' (recommended), 'entropy'
+load_balance_loss_type: combined
+
+# TriModal Mamba with MoE parameters (Audio + Visual + Text)
+trimodal_mamba_moe:
+  audio_input_size: 25 # LDDs for D-Vlog
+  video_input_size: 136
+  text_input_size: 768 # BERT base hidden size
+  mm_input_size: 256
+  mm_output_sizes: [256, 64]
+  dropout: 0.1
+  d_ffn: 1024 
+  num_layers: 2
+  activation: 'GELU'
+  causal: false
+
+  mamba_config:
+    d_state: 12 
+    expand: 4 
+    d_conv: 4 
+    bidirectional: true
+
+trimodal_mamba_moe_lmvd:
+  audio_input_size: 128 # VGGish for LMVD
+  video_input_size: 136
+  text_input_size: 768 # BERT base hidden size
+  mm_input_size: 256
+  mm_output_sizes: [256, 64]
+  dropout: 0.1
+  d_ffn: 1024 
+  num_layers: 2
+  activation: 'GELU'
+  causal: false
+
+  mamba_config:
+    d_state: 16 
+    expand: 4 
+    d_conv: 4 
+    bidirectional: true
+
