@@ -25,7 +25,7 @@ from models.DepMamba_multiencoder_ensemble import DepMambaMultiEncoderEnsemble
 from datasets import get_dvlog_trimodal_dataloader, get_lmvd_trimodal_dataloader
 
 # Default data paths
-LMVD_DATA_PATH = "/data1/junyeop/modal_agnostic/lmvd"
+LMVD_DATA_PATH = "DATAPATH"
 
 
 CONFIG_PATH = "./config/config_ensemble.yaml"
@@ -67,7 +67,7 @@ def parse_args():
                        help="Weight for MoE load balancing loss")
     
     # Data arguments
-    parser.add_argument("--data_dir", type=str, default=config.get('data_dir', './datasets/dvlog'))
+    parser.add_argument("--data_dir", type=str, default=config.get('data_dir', 'DATASET_PATH'))
     parser.add_argument("--dataset", type=str, default="dvlog", choices=['dvlog', 'lmvd'])
     parser.add_argument("--train_gender", type=str, default=config.get('train_gender', 'both'))
     parser.add_argument("--test_gender", type=str, default=config.get('test_gender', 'both'))
