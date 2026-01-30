@@ -69,14 +69,3 @@ multiencoder_lmvd:
     expand: 4 
     d_conv: 4 
     bidirectional: true
-
-# ============================================
-# Late Ensemble Fusion Types 설명:
-# ============================================
-# - average: 단순 logits 평균
-# - weighted: 학습 가능한 가중치로 logits 평균 (권장)
-# - attention: Feature 기반 attention으로 동적 가중치 결정
-# - voting: Soft voting (확률 평균)
-# - stacking: Meta-learner가 logits 조합 학습
-# - gating: Feature 기반 gating network로 가중치 결정
-# ============================================
