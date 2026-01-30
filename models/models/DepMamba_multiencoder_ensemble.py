@@ -1,18 +1,3 @@
-"""DepMamba Multi-Encoder Ensemble Model with MoE for Multimodal Depression Detection.
-Multiple multimodal encoders with MoE trained end-to-end with ensemble fusion.
-
-This model contains multiple TriModalMoE encoders that process the same
-multimodal input (Audio + Visual + Text) and ensembles their outputs.
-
-Each encoder includes:
-- TriModalCoSSM: Collaborative SSM for 3 modalities
-- EnSSM_MoE: Enhanced SSM with Mixture of Experts
-
-Authors
--------
-* Based on DepMamba by Jiaxin Ye 2024
-* Multi-Encoder Ensemble with MoE by AI Assistant 2025
-"""
 
 import torch
 import torch.nn as nn
@@ -1394,3 +1379,4 @@ if __name__ == '__main__':
     print("\n" + "="*80)
     print("All tests completed!")
     print("="*80)
+
