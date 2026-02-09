@@ -1,4 +1,4 @@
-# DepM³$: Modality-Agnostic Mixture-of-Experts with Mamba for Depression Detection
+# DepM³: Modality-Agnostic Mixture-of-Experts with Mamba for Depression Detection
 
 **Multi-Encoder Ensemble with Mixture of Experts for Multimodal Depression Detection using State Space Models**
 
