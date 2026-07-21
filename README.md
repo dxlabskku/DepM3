@@ -1,95 +1,57 @@
-# DepM³: Modality-Agnostic Mixture-of-Experts with Mamba for Depression Detection
+# DepM³
 
-**Multi-Encoder Ensemble with Mixture of Experts for Multimodal Depression Detection using State Space Models**
-
-> A multi-encoder ensemble framework that processes multimodal inputs (Audio + Visual + Text) by combining Mamba-based State Space Models with Mixture of Experts for depression detection.
+**DepM³: Modality-Agnostic Mixture-of-Experts with Mamba for Depression Detection**
 
 ---
 
-## Architecture Overview
+## Abstract
+
+Multimodal depression detection has gained significant attention, yet most existing approaches assume complete modality availability at inference time. Addressing this limitation requires both adaptive fusion that adjusts computation based on which modalities are available and efficient temporal modeling for the long behavioral sequences typical of depression analysis, two capabilities that existing methods rarely provide jointly. We propose DepM³, a modality-agnostic framework that unifies efficient long-range temporal modeling with modality-aware conditional computation for robust multimodal depression detection. DepM³ introduces a two-stage Mixture-of-Experts mechanism: a Modality-aware MoE that adapts modality-specific features prior to fusion, and a Post-CoSSM MoE that routes fused representations based on explicit modality presence scores, enabling adaptive computation where experts specialize for different modality subsets. A diversity-regularized multi-encoder ensemble further captures complementary depression indicators, improving robustness under incomplete modality scenarios. Built on a Mamba-based state space model, the framework achieves linear-time sequence processing suited to the temporally diffuse behavioral patterns associated with depression. We conduct comprehensive experiments on two post-level benchmarks (D-Vlog and LMVD), one user-level longitudinal benchmark (MUD3), and one clinical interview benchmark (DAIC-WoZ), outperforming full- and missing-modality baselines on three of the four benchmarks and remaining competitive on the fourth, while degrading gracefully under missing and corrupted modality conditions.
+
+---
+
+## Framework
 
 <p align="center">
-  <img src="figure_V2.png" width="100%" alt="DepMamba-MoE-Ensemble Architecture"/>
+  <img src="assets/framework.png" width="95%">
 </p>
 
-### Key Components
+DepM³ consists of three main components:
 
-| Component | Description |
-|-----------|-------------|
-| **TriModalCoSSM** | Collaborative State Space Model — Processes three modalities (Audio, Visual, Text) in parallel via Bidirectional Mamba, learning cross-modal interactions through a shared state transition matrix A |
-| **EnSSM_MoE** | Enhanced SSM with Mixture of Experts — Performs dynamic expert routing on fused multimodal features. Modality-aware gating enables robustness to missing modalities |
-| **Ensemble Fusion** | Fuses outputs from multiple encoders via Early (feature-level) or Late (logits-level) fusion strategies |
-| **Diversity Loss** | Cosine similarity-based diversity loss between encoders, encouraging each encoder to learn distinct patterns |
+1. **Modality-aware MoE (Pre-CoSSM)**
+   FiLM-conditioned expert routing that adapts each modality's features before fusion, informed by modality identity and missing flags.
 
----
+2. **Presence-conditioned MoE (Post-CoSSM)**
+   Expert routing over the fused representation, conditioned on continuous modality presence scores within the Mamba-based sequence encoder.
 
-## Project Structure
-
-```
-DepMamba_MoE_ensemble/
-├── README.md
-├── main_multiencoder_ensemble.py     # End-to-end training script
-├── config/
-│   ├── config.yaml                   # Base (single encoder) configuration
-│   ├── config_moe.yaml               # MoE-specific configuration
-│   └── config_ensemble.yaml          # Multi-encoder ensemble configuration
-└── models/
-    ├── __init__.py
-    ├── base.py                       # Base network classes
-    ├── DepMamba_multiencoder_ensemble.py  # Main ensemble model
-    ├── mamba/
-    │   ├── bimamba.py                # Bidirectional Mamba (v1/v2)
-    │   ├── mamba_blocks.py           # Mamba block wrappers
-    │   ├── mm_bimamba.py             # Multimodal Bidirectional Mamba
-    │   ├── trimodal_mamba.py         # Tri-modal Mamba (A+V+T)
-    │   └── selective_scan_interface.py   # Selective scan CUDA kernels
-    └── moe/
-        ├── __init__.py
-        └── multimodal_moe.py         # Multimodal Mixture of Experts
-```
+3. **Diversity-regularized Multi-encoder Ensemble**
+   Independent encoders trained with a diversity objective and combined by attention-based late fusion for robustness under uncertain missing patterns.
 
 ---
 
-## Requirements
+## Repository Structure
 
-- Python >= 3.8
-- PyTorch >= 2.0
-- [mamba-ssm](https://github.com/state-spaces/mamba)
-- [causal-conv1d](https://github.com/Dao-AILab/causal-conv1d)
-- [speechbrain](https://github.com/speechbrain/speechbrain)
-- einops
-- PyYAML
-- tqdm
-- numpy
-
----
-
-## Usage
-
-### Training
-
-```bash
-# Default: 3 encoders, late fusion (weighted), MoE enabled
-python main_multiencoder_ensemble.py
-
-# Custom configuration
-python main_multiencoder_ensemble.py \
-    --num_encoders 3 \
-    --ensemble_stage late \
-    --fusion_type weighted \
-    --use_moe True \
-    --num_experts 6 \
-    --top_k_experts 2 \
-    --dataset dvlog \
-    --epochs 120 \
-    --batch_size 16 \
-    --learning_rate 8e-5 \
-    --gpu 0
-
-# LMVD dataset
-python main_multiencoder_ensemble.py \
-    --dataset lmvd \
-    --num_encoders 3 \
-    --fusion_type weighted
+```text
+depm3_release/
+├── post_level/          # DepM³ training: D-Vlog / LMVD / DAIC-WoZ
+│   ├── README.md
+│   ├── main_multiencoder_ensemble.py
+│   ├── models/
+│   ├── datasets/
+│   └── config/
+│
+├── user_level/          # DepM³ training: MUD3 (user-level)
+│   ├── README.md
+│   └── main_mud3.py
+│
+├── evaluation/          # missing/corrupted-modality evaluation + efficiency
+│   └── README.md
+│
+├── data_preparation/    # DAIC-WoZ feature builder
+│   └── README.md
+│
+├── assets/
+│   └── framework.png
+│
+└── README.md
 ```
-
