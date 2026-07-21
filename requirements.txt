@@ -1,0 +1,13 @@
+# pip-installable subset. torch / mamba_ssm / causal_conv1d are CUDA builds and
+# must be installed manually FIRST -- see README "Environment".
+#   torch==2.11.0+cu128   (https://pytorch.org/get-started/locally/)
+#   causal_conv1d==1.6.1  (https://github.com/Dao-AILab/causal-conv1d/releases)
+#   mamba_ssm==2.3.1      (https://github.com/state-spaces/mamba/releases)
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.3
+tqdm>=4.60
+PyYAML>=5.4
+einops>=0.7
+speechbrain>=1.0
+transformers>=4.40
